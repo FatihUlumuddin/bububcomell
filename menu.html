@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scrolling for mobile when PDF is shown */
+        }
+
+        .dashboard-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px 0;
+        }
+
+        .dashboard-button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+
+        .materi-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .materi-button:hover {
+            background-color: #0056b3;
+        }
+
+        .media-bubub-button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .media-bubub-button-back {
+            background-color: #2ee3f0;
+            color: white;
+        }
+
+        .pdf-page {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%; /* Ensure PDF fits screen */
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .dashboard-button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h1>Media Stacko</h1>
+
+    <button class="dashboard-button materi-button" onclick="showPdf()">
+        <i class="bi bi-file-earmark-pdf"></i> Lihat Materi
+    </button>
+
+    <button class="dashboard-button media-bubub-button" onclick="goToMediaBubub()">
+        <i class="bi bi-play-btn"></i> Menuju Media
+    </button>
+
+    <button class="dashboard-button media-bubub-button-back" onclick="goToBack()">
+        <i class="bi bi-arrow-left"></i> Back
+    </button>
+</div>
+
+<script>
+    function showPdfInCanvas(url) {
+        const container = document.querySelector('.dashboard-container');
+
+        // Remove old canvases if any (refresh PDF view)
+        document.querySelectorAll('canvas.pdf-page').forEach(canvas => canvas.remove());
+
+        const loadingTask = pdfjsLib.getDocument(url);
+        loadingTask.promise.then(function(pdf) {
+            for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                pdf.getPage(pageNumber).then(function(page) {
+                    const canvas = document.createElement('canvas');
+                    canvas.classList.add('pdf-page');
+                    container.appendChild(canvas);
+
+                    // Scale to fit mobile (scale down if narrow screens)
+                    const scale = window.innerWidth < 768 ? 0.8 : 1.5;
+                    const viewport = page.getViewport({ scale });
+
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+
+                    page.render(renderContext);
+                });
+            }
+        }).catch(function(error) {
+            console.error('Error loading PDF:', error);
+        });
+    }
+
+    function showPdf() {
+        showPdfInCanvas('materi-compressed.pdf');
+    }
+
+    function goToMediaBubub() {
+        window.location.href = 'media-bubub.html';
+    }
+
+    function goToBack() {
+        window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>
