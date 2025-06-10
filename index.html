@@ -60,3 +60,19 @@
 
 </body>
 </html>
+<script>
+  // your existing functions...
+
+  // Add protection to block right-click and devtools keys
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12') e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') e.preventDefault();
+    if (e.metaKey && e.altKey && e.key.toLowerCase() === 'i') e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') e.preventDefault();
+    if (e.metaKey && e.altKey && e.key.toLowerCase() === 'j') e.preventDefault();
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') e.preventDefault();
+    if (e.metaKey && e.key.toLowerCase() === 'u') e.preventDefault();
+  });
+</script>
